@@ -1,44 +1,38 @@
+import { useEffect, useState } from "react";
+import API from "../services/api";
 import DashboardCard from "../components/DashboardCard";
 
 function DashboardPage() {
+  const [latest, setLatest] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await API.get("/api/health");
+        const data = res.data;
+
+        // get latest entry
+        setLatest(data[data.length - 1]);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-slate-800">Overview</h1>
-        <p className="text-slate-500 mt-1">Here is your health summary for today.</p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        <DashboardCard 
-          title="Water Intake" 
-          value="3 Liters" 
-          icon="💧" 
-          color="bg-blue-100 text-blue-600"
-        />
-        <DashboardCard 
-          title="Calories" 
-          value="2200 kcal" 
-          icon="🔥" 
-          color="bg-orange-100 text-orange-600"
-        />
-        <DashboardCard 
-          title="Exercise" 
-          value="45 Minutes" 
-          icon="🏃‍♂️" 
-          color="bg-emerald-100 text-emerald-600"
-        />
-        <DashboardCard 
-          title="Sleep" 
-          value="8 Hours" 
-          icon="😴" 
-          color="bg-indigo-100 text-indigo-600"
-        />
-        <DashboardCard 
-          title="Weight" 
-          value="72 Kg" 
-          icon="⚖️" 
-          color="bg-purple-100 text-purple-600"
-        />
+        <DashboardCard title="Water Intake" value={`${latest?.water || 0} Liters`} icon="💧" />
+        <DashboardCard title="Calories" value={`${latest?.calories || 0} kcal`} icon="🔥" />
+        <DashboardCard title="Exercise" value={`${latest?.exercise || 0} Min`} icon="🏃‍♂️" />
+        <DashboardCard title="Sleep" value={`${latest?.sleep || 0} Hours`} icon="😴" />
+        <DashboardCard title="Weight" value={`${latest?.weight || 0} Kg`} icon="⚖️" />
       </div>
     </div>
   );

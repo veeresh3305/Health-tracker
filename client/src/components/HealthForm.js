@@ -5,7 +5,7 @@ function HealthForm() {
   const [formData, setFormData] = useState({
     userId: "12345",
     date: "",
-    waterIntake: "",
+    water: "",
     calories: "",
     exercise: "",
     sleep: "",
@@ -19,7 +19,7 @@ function HealthForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await API.post("/health", formData);
+      await API.post("/api/health", formData);
       alert("Health Entry Saved Successfully! 🎉");
     } catch (error) {
       alert("Error Saving Entry");

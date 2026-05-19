@@ -22,7 +22,7 @@ function LoginForm() {
     setError("");
 
     try {
-      const res = await API.post("/auth/login", formData);
+      const res = await API.post("/api/auth/login", formData);
       localStorage.setItem("token", res.data.token);
       navigate("/dashboard");
     } catch (error) {

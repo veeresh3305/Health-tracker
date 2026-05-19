@@ -23,9 +23,9 @@ function RegisterForm() {
     setError("");
 
     try {
-      const res = await API.post("/auth/register", formData);
+      const res = await API.post("/api/auth/register", formData);
+
       alert("Registration Successful. Please login.");
-      // In a real app, maybe log them in directly or switch tab
     } catch (error) {
       setError("Registration failed. Try a different email.");
     }

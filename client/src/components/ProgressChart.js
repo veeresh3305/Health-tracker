@@ -1,47 +1,52 @@
 import {
-  LineChart,
-  Line,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
-  ResponsiveContainer,
-  Area,
-  AreaChart
+  ResponsiveContainer
 } from "recharts";
 
-const data = [
-  { day: "Mon", water: 2 },
-  { day: "Tue", water: 3 },
-  { day: "Wed", water: 4 },
-  { day: "Thu", water: 3 },
-  { day: "Fri", water: 5 },
-  { day: "Sat", water: 6 },
-  { day: "Sun", water: 4 },
-];
+function SingleChart({ title, dataKey, color, data }) {
+  const chartData = data.map((item) => ({
+    date: item.date,
+    value: Number(item[dataKey]) || 0,
+  }));
 
-function ProgressChart() {
   return (
-    <div className="w-full h-96">
-      <h3 className="text-lg font-semibold text-slate-700 mb-6">Water Intake History (Liters)</h3>
+    <div className="w-full h-80 mb-10">
+      <h3 className="text-lg font-semibold text-slate-700 mb-4">
+        {title}
+      </h3>
+
       <ResponsiveContainer width="100%" height="100%">
-        <AreaChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-          <defs>
-            <linearGradient id="colorWater" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
-              <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
-            </linearGradient>
-          </defs>
-          <XAxis dataKey="day" stroke="#94a3b8" />
-          <YAxis stroke="#94a3b8" />
-          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-          <Tooltip 
-            contentStyle={{ backgroundColor: '#fff', borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)' }}
-            itemStyle={{ color: '#3b82f6', fontWeight: 'bold' }}
+        <AreaChart data={chartData}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="date" />
+          <YAxis />
+          <Tooltip />
+
+          <Area
+            type="monotone"
+            dataKey="value"
+            stroke={color}
+            fill={color}
+            fillOpacity={0.2}
           />
-          <Area type="monotone" dataKey="water" stroke="#3b82f6" strokeWidth={3} fillOpacity={1} fill="url(#colorWater)" />
         </AreaChart>
       </ResponsiveContainer>
+    </div>
+  );
+}
+
+function ProgressChart({ data = [] }) {
+  return (
+    <div>
+      <SingleChart title="Water Intake (Liters)" dataKey="water" color="#3b82f6" data={data} />
+      <SingleChart title="Calories Burned" dataKey="calories" color="#f97316" data={data} />
+      <SingleChart title="Sleep (Hours)" dataKey="sleep" color="#8b5cf6" data={data} />
+      <SingleChart title="Exercise (Minutes)" dataKey="exercise" color="#10b981" data={data} />
     </div>
   );
 }

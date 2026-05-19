@@ -1,22 +1,44 @@
+import { useEffect, useState } from "react";
+import API from "../services/api";
 import SearchBar from "../components/SearchBar";
 import HistoryTable from "../components/HistoryTable";
 
 function HistoryPage() {
+  const [entries, setEntries] = useState([]);
+  const [filtered, setFiltered] = useState([]);
+
+  const fetchData = async () => {
+    try {
+      const res = await API.get("/api/health");
+      setEntries(res.data);
+      setFiltered(res.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  // SEARCH FUNCTION
+  const handleSearch = (query) => {
+    const q = query.toLowerCase();
+
+    const filteredData = entries.filter((item) =>
+      item.date.toLowerCase().includes(q)
+    );
+
+    setFiltered(filteredData);
+  };
+
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-slate-800">Entry History</h1>
-          <p className="text-slate-500 mt-1">Review your past health entries.</p>
-        </div>
-        <div className="w-full md:w-auto">
-          <SearchBar />
-        </div>
+    <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="flex justify-between mb-6">
+        <SearchBar onSearch={handleSearch} />
       </div>
 
-      <div className="glass rounded-2xl shadow-sm border border-slate-200 bg-white overflow-hidden">
-        <HistoryTable />
-      </div>
+      <HistoryTable data={filtered} refresh={fetchData} />
     </div>
   );
 }
